@@ -46,6 +46,7 @@
 /tests/phpunit/vendor/*
 /tests/phpunit/composer.lock
 /vendor/*
+composer.lock
 
 # Test Config File
 /tests/phpunit/bootstrap.php

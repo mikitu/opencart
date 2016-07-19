@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+<?php
+
+// Version
+define('VERSION', '2.0.3.1');
+
+// Configuration
+if (is_file(__DIR__ . '/../upload/config.php')) {
+    require_once(__DIR__ . '/../upload/config.php');
+}
+
+require __DIR__.'/../vendor/autoload.php';
+
+
+use Symfony\Component\Console\Application;
+
+$src = __DIR__ . '/../src/';
+$path = $src . 'Console';
+
+$directory = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
+$iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
+
+$extensions = array("php");
+
+$application = new Application();
+
+foreach ($iterator as $fileinfo) {
+    if (in_array($fileinfo->getExtension(), $extensions) && $fileinfo->getBasename() != 'BaseCommand.php') {
+        $file = str_replace($src, '', $fileinfo->getPathname());
+        $class = 'App\\' . str_replace('.php', '', str_replace('/', '\\', $file));
+        $application->add(new $class);
+    }
+}
+
+$application->run();
